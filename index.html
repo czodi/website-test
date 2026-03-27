@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager | Zen Edition</title>
+    <!-- Chargement via HTTPS pour compatibilité GitHub Pages -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -26,13 +27,14 @@
             overflow: hidden;
         }
 
-        /* Sidebar Style Zen */
+        /* Sidebar Style Zen Browser */
         .zen-sidebar {
             width: var(--sidebar-width);
             height: calc(100vh - 24px);
             margin: 12px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             display: flex;
@@ -41,6 +43,7 @@
             padding: 24px 0;
             gap: 20px;
             z-index: 50;
+            flex-shrink: 0;
         }
 
         .nav-item {
@@ -51,7 +54,7 @@
             align-items: center;
             justify-content: center;
             color: #64748b;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             cursor: pointer;
             position: relative;
         }
@@ -83,9 +86,10 @@
             font-size: 12px;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             white-space: nowrap;
             border: 1px solid var(--glass-border);
+            z-index: 100;
         }
 
         .nav-item:hover .tooltip {
@@ -104,6 +108,7 @@
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
         }
 
@@ -129,21 +134,28 @@
         .neo-input:focus {
             border-color: var(--accent-blue);
             outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
         }
 
         .btn-neon {
             background: linear-gradient(135deg, #007bff, #0056b3);
             box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-neon:active {
+            transform: scale(0.98);
         }
 
         .custom-checkbox {
             appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border: 2px solid var(--glass-border);
             border-radius: 6px;
             cursor: pointer;
             position: relative;
+            transition: all 0.2s;
         }
 
         .custom-checkbox:checked {
@@ -155,7 +167,7 @@
             content: "✓";
             position: absolute;
             color: white;
-            font-size: 12px;
+            font-size: 14px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -168,8 +180,10 @@
             justify-content: center;
             border-radius: 8px;
             font-size: 11px;
+            transition: background 0.2s;
         }
 
+        /* Responsive Mobile */
         @media (max-width: 768px) {
             body { flex-direction: column; }
             .zen-sidebar { 
@@ -178,6 +192,7 @@
                 flex-direction: row; 
                 justify-content: space-around; 
                 padding: 0;
+                margin: 12px auto;
             }
             .nav-item.active::before { display: none; }
             .nav-item.active::after {
@@ -190,41 +205,42 @@
                 border-radius: 4px 4px 0 0;
             }
             .main-container { padding: 20px; }
+            .tooltip { display: none; }
         }
     </style>
 </head>
 <body>
     
-    <!-- Sidebar Style Zen Browser -->
+    <!-- Sidebar Zen Browser Style -->
     <nav class="zen-sidebar">
-        <div class="mb-4">
+        <div class="mb-4 hidden md:block">
             <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <span class="font-bold text-xl text-white">V</span>
             </div>
         </div>
         
-        <div class="nav-item active">
+        <div class="nav-item active" title="Tableau de bord">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>
             <span class="tooltip">Tableau de bord</span>
         </div>
 
-        <div class="nav-item">
+        <div class="nav-item" title="Calendrier">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <span class="tooltip">Calendrier</span>
         </div>
 
-        <div class="nav-item">
+        <div class="nav-item" title="Analyses">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             <span class="tooltip">Analyses</span>
         </div>
 
-        <div class="mt-auto nav-item">
+        <div class="md:mt-auto nav-item" title="Paramètres">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -233,11 +249,11 @@
         </div>
     </nav>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <div class="main-container">
         <div class="max-w-4xl mx-auto">
             
-            <header class="mb-12 flex justify-between items-start">
+            <header class="mb-12 flex flex-col md:flex-row justify-between items-start gap-6">
                 <div>
                     <div class="flex items-center gap-3 mb-2">
                         <div class="w-8 h-px bg-blue-500"></div>
@@ -247,23 +263,22 @@
                     <p id="currentDateDisplay" class="text-slate-500 text-sm font-medium"></p>
                 </div>
                 
-                <!-- Quick Stats Floating -->
                 <div class="flex gap-4">
-                    <div class="glass-panel px-4 py-2 rounded-xl text-center">
-                        <p class="text-xs text-slate-500 uppercase font-bold tracking-tighter">Progression</p>
-                        <p id="progressPercent" class="text-lg font-medium text-blue-400">0%</p>
+                    <div class="glass-panel px-5 py-3 rounded-2xl text-center min-w-[120px]">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-tighter mb-1">Progression</p>
+                        <p id="progressPercent" class="text-xl font-medium text-blue-400">0%</p>
                     </div>
                 </div>
             </header>
 
-            <!-- Input Section -->
-            <div class="glass-panel p-3 rounded-2xl flex flex-col md:flex-row gap-3 mb-12">
-                <input type="text" id="taskInput" placeholder="Nouvelle priorité..." 
+            <!-- Bar d'ajout -->
+            <div class="glass-panel p-3 rounded-2xl flex flex-col md:flex-row gap-3 mb-12 shadow-2xl">
+                <input type="text" id="taskInput" placeholder="Saisir une nouvelle priorité..." 
                        class="flex-1 px-5 py-3 rounded-xl neo-input text-base placeholder:text-slate-600 transition-all">
                 <div class="flex gap-2">
                     <input type="date" id="dateInput" lang="fr-FR" 
                            class="px-4 py-3 rounded-xl neo-input text-sm min-w-[150px]">
-                    <button id="addTaskBtn" class="btn-neon text-white px-6 py-3 rounded-xl font-bold text-sm">
+                    <button id="addTaskBtn" class="btn-neon text-white px-8 py-3 rounded-xl font-bold text-sm whitespace-nowrap">
                         Ajouter
                     </button>
                 </div>
@@ -272,7 +287,7 @@
             <!-- Dashboard Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
-                <!-- Task List (Col 1 & 2) -->
+                <!-- Liste des tâches -->
                 <div class="lg:col-span-2 space-y-4">
                     <div id="taskList" class="space-y-4"></div>
                     
@@ -280,32 +295,35 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-4 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                         </svg>
-                        <p class="text-xs font-bold uppercase tracking-widest opacity-40">Aucune tâche</p>
+                        <p class="text-xs font-bold uppercase tracking-widest opacity-40">Votre file d'attente est vide</p>
                     </div>
                 </div>
 
-                <!-- Right Info (Col 3) -->
+                <!-- Widgets Latéraux -->
                 <div class="space-y-8">
-                    <!-- Mini Calendrier Zen -->
+                    <!-- Calendrier -->
                     <div class="glass-panel p-6 rounded-2xl">
-                        <div id="calendarHeader" class="text-xs font-bold text-slate-300 mb-4 uppercase tracking-wider"></div>
+                        <div id="calendarHeader" class="text-[10px] font-bold text-slate-400 mb-4 uppercase tracking-[0.2em]"></div>
                         <div class="grid grid-cols-7 gap-1 text-[9px] text-slate-600 font-bold mb-3 text-center">
                             <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
                         </div>
                         <div id="miniCalendar" class="grid grid-cols-7 gap-1 calendar-grid"></div>
                     </div>
 
-                    <!-- Stats Rapides -->
+                    <!-- Statistiques détaillées -->
                     <div class="glass-panel p-6 rounded-2xl">
-                        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Statistiques</h3>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="text-2xl text-white font-light" id="totalCount">0</p>
-                                <p class="text-[9px] text-slate-500 uppercase">Total</p>
+                        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-6">Récapitulatif</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-slate-400">Total</span>
+                                <span class="text-lg text-white font-medium" id="totalCount">0</span>
                             </div>
-                            <div class="text-right">
-                                <p class="text-2xl text-green-400 font-light" id="doneCount">0</p>
-                                <p class="text-[9px] text-slate-500 uppercase">Terminées</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-slate-400">Terminées</span>
+                                <span class="text-lg text-green-400 font-medium" id="doneCount">0</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden mt-4">
+                                <div id="progressLine" class="bg-blue-500 h-full transition-all duration-700" style="width: 0%"></div>
                             </div>
                         </div>
                     </div>
@@ -315,7 +333,9 @@
     </div>
 
     <script>
-        let tasks = JSON.parse(localStorage.getItem('tasks_zen_v1')) || [];
+        // Utilisation d'une clé unique pour le localStorage
+        const STORAGE_KEY = 'tasks_zen_vision_final';
+        let tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
         const taskInput = document.getElementById('taskInput');
         const dateInput = document.getElementById('dateInput');
@@ -325,12 +345,15 @@
         const totalCount = document.getElementById('totalCount');
         const doneCount = document.getElementById('doneCount');
         const progressPercent = document.getElementById('progressPercent');
+        const progressLine = document.getElementById('progressLine');
 
+        // Init date
         dateInput.valueAsDate = new Date();
-        document.getElementById('currentDateDisplay').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+        const options = { weekday: 'long', day: 'numeric', month: 'long' };
+        document.getElementById('currentDateDisplay').textContent = new Date().toLocaleDateString('fr-FR', options);
 
         function save() {
-            localStorage.setItem('tasks_zen_v1', JSON.stringify(tasks));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
             render();
         }
 
@@ -343,19 +366,24 @@
             totalCount.textContent = total;
             doneCount.textContent = completed;
             progressPercent.textContent = `${percent}%`;
+            progressLine.style.width = `${percent}%`;
 
             if (total === 0) {
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
-                const sorted = [...tasks].sort((a, b) => new Date(a.date) - new Date(b.date));
+                // Tri : non terminées d'abord, puis par date
+                const sorted = [...tasks].sort((a, b) => {
+                    if (a.completed !== b.completed) return a.completed ? 1 : -1;
+                    return new Date(a.date) - new Date(b.date);
+                });
 
                 sorted.forEach((task) => {
                     const originalIndex = tasks.indexOf(task);
                     const isOverdue = !task.completed && new Date(task.date) < new Date().setHours(0,0,0,0);
                     
                     const card = document.createElement('div');
-                    card.className = `task-card p-5 rounded-2xl flex items-center justify-between group`;
+                    card.className = `task-card p-5 rounded-2xl flex items-center justify-between group animate-in fade-in slide-in-from-bottom-2 duration-300`;
                     
                     card.innerHTML = `
                         <div class="flex items-center gap-5">
@@ -363,7 +391,7 @@
                                    class="custom-checkbox"
                                    onchange="toggle(${originalIndex})">
                             <div class="flex flex-col">
-                                <span class="text-sm font-medium ${task.completed ? 'line-through text-slate-600' : 'text-slate-100'}">
+                                <span class="text-sm font-medium ${task.completed ? 'line-through text-slate-600' : 'text-slate-100'} transition-all">
                                     ${task.text}
                                 </span>
                                 <span class="text-[10px] font-bold uppercase mt-1 ${isOverdue ? 'text-red-500' : 'text-slate-500'}">
@@ -371,7 +399,7 @@
                                 </span>
                             </div>
                         </div>
-                        <button onclick="remove(${originalIndex})" class="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 transition-all">
+                        <button onclick="remove(${originalIndex})" class="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 transition-all p-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
@@ -412,8 +440,15 @@
             }
         }
 
-        window.toggle = (idx) => { tasks[idx].completed = !tasks[idx].completed; save(); };
-        window.remove = (idx) => { tasks.splice(idx, 1); save(); };
+        window.toggle = (idx) => { 
+            tasks[idx].completed = !tasks[idx].completed; 
+            save(); 
+        };
+
+        window.remove = (idx) => { 
+            tasks.splice(idx, 1); 
+            save(); 
+        };
 
         function formatDate(dateStr) {
             const [year, month, day] = dateStr.split('-');
@@ -425,6 +460,7 @@
         addTaskBtn.addEventListener('click', addTask);
         taskInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTask(); });
 
+        // Premier rendu
         window.onload = render;
     </script>
 </body>
