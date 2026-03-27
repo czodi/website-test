@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fish Focus | Favoris & Objectifs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fish Focus | Mobile Ready</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
@@ -11,8 +11,14 @@
             --bg-color: #020617;
             --accent-primary: #3b82f6;
             --accent-secondary: #06b6d4;
-            --glass: rgba(15, 23, 42, 0.6);
+            --glass: rgba(15, 23, 42, 0.7);
             --glass-border: rgba(255, 255, 255, 0.1);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
         }
 
         body {
@@ -21,7 +27,9 @@
             font-family: 'Inter', sans-serif;
             margin: 0;
             display: flex;
+            flex-direction: column;
             height: 100vh;
+            height: -webkit-fill-available;
             overflow: hidden;
             transition: background-color 0.5s ease;
         }
@@ -34,30 +42,60 @@
                 radial-gradient(circle at 15% 15%, var(--accent-primary), transparent 40%),
                 radial-gradient(circle at 85% 85%, var(--accent-secondary), transparent 40%);
             opacity: 0.15;
-            transition: all 0.5s ease;
+            transition: all 0.8s ease;
         }
 
         h1, h2, h3 { font-family: 'Outfit', sans-serif; }
 
-        .zen-sidebar {
-            width: 76px;
-            height: calc(100vh - 32px);
-            margin: 16px;
+        /* Navigation Responsive */
+        .nav-container {
+            position: fixed;
+            z-index: 1000;
             background: var(--glass);
             backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 28px 0;
-            gap: 20px;
-            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        /* Desktop Sidebar */
+        @media (min-width: 768px) {
+            .nav-container {
+                width: 80px;
+                height: calc(100vh - 32px);
+                margin: 16px;
+                border-radius: 24px;
+                flex-direction: column;
+                align-items: center;
+                padding: 28px 0;
+                gap: 20px;
+                left: 0;
+            }
+            .main-container { margin-left: 112px; }
+        }
+
+        /* Mobile Bottom Bar */
+        @media (max-width: 767px) {
+            .nav-container {
+                bottom: 12px;
+                left: 12px;
+                right: 12px;
+                height: 70px;
+                border-radius: 20px;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+                padding: 0 10px;
+                padding-bottom: var(--safe-area-bottom);
+                box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
+            }
+            .main-container { margin-bottom: 90px; padding: 24px 20px; }
+            .desktop-only { display: none; }
         }
 
         .nav-item {
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 50px;
             border-radius: 16px;
             display: flex;
             align-items: center;
@@ -65,92 +103,71 @@
             color: #94a3b8;
             transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
         }
-        .nav-item:hover { color: white; background: rgba(255, 255, 255, 0.05); }
         .nav-item.active { 
             color: white; 
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transform: translateY(-5px);
         }
 
-        .main-container { flex: 1; overflow-y: auto; padding: 40px 60px; position: relative; }
+        .main-container { flex: 1; overflow-y: auto; position: relative; scroll-behavior: smooth; }
         .liquid-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; }
 
-        .view-content { display: none; animation: fadeIn 0.4s ease; height: 100%; }
+        .view-content { display: none; animation: fadeIn 0.4s ease; }
         .view-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Grille des Favoris */
+        /* Grille Adaptative */
         .app-icon-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            width: 100px;
+            width: 100%;
             position: relative;
         }
-        .app-icon-wrapper:hover { transform: translateY(-5px); }
 
         .app-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 20px;
+            width: 72px;
+            height: 72px;
+            border-radius: 22px;
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.08);
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
         }
-        .app-icon-wrapper:hover .app-icon {
-            background: rgba(255,255,255,0.07);
-            border-color: rgba(255,255,255,0.2);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
-        }
+        
+        .app-icon-wrapper:active .app-icon { transform: scale(0.9); }
 
-        .app-icon img {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-
-        .app-icon.fallback-icon { 
-            background: linear-gradient(135deg, rgba(79, 70, 229, 0.8), rgba(55, 48, 163, 0.8)); 
-        }
+        .app-icon img { width: 38px; height: 38px; object-fit: contain; }
+        .app-icon .emoji-display { font-size: 32px; }
 
         .app-label {
             font-size: 12px;
             font-weight: 500;
-            color: #cbd5e1;
+            color: #94a3b8;
             text-align: center;
             width: 100%;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            transition: color 0.3s ease;
         }
-        .app-icon-wrapper:hover .app-label { color: white; }
 
         .icon-actions {
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: -4px;
+            right: -4px;
             display: flex;
-            gap: 6px;
-            opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.2s ease;
-            pointer-events: none;
+            gap: 4px;
             z-index: 10;
         }
-        .app-icon-wrapper:hover .icon-actions { opacity: 1; transform: scale(1); pointer-events: auto; }
         
         .action-btn {
             width: 26px;
@@ -160,196 +177,211 @@
             align-items: center;
             justify-content: center;
             color: white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.1);
         }
-        .btn-edit { background: #3b82f6; }
-        .btn-del { background: #ef4444; }
+        .btn-del { background: #dc2626; }
 
-        .tool-bar {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 40px;
-            align-items: center;
-        }
+        /* Search Bar */
         .search-input {
             width: 100%;
-            background: rgba(255,255,255,0.03);
+            background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 18px;
-            padding: 14px 16px 14px 48px;
+            border-radius: 16px;
+            padding: 12px 16px 12px 44px;
             color: white;
-            outline: none;
-            transition: all 0.3s;
+            font-size: 16px; 
         }
-        .search-input:focus { background: rgba(255,255,255,0.06); border-color: var(--accent-primary); }
 
-        .file-upload-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 2px dashed rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 30px;
+        /* Thèmes Swatches */
+        .theme-swatch {
+            height: 50px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
         }
-        .file-upload-label:hover { border-color: var(--accent-primary); background: rgba(59, 130, 246, 0.05); }
+        .theme-swatch.active { border-color: white; }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        /* Notification Toast */
+        #notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translate(-50%, -100px);
+            padding: 12px 20px;
+            border-radius: 12px;
+            background: var(--accent-primary);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 2000;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            white-space: nowrap;
+        }
+        #notification.show { transform: translate(-50%, 0); }
+
+        input, select, button {
+            font-size: 16px !important;
+        }
     </style>
 </head>
 <body>
     <div class="bg-glow" id="dynamicBg"></div>
+    <div id="notification"><span>Message</span></div>
     
-    <nav class="zen-sidebar">
-        <div class="mb-4">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                <svg viewBox="0 0 24 24" class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+    <nav class="nav-container">
+        <div class="desktop-only mb-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] flex items-center justify-center">
+                <svg viewBox="0 0 24 24" class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
             </div>
         </div>
-        <div class="nav-item active" data-view="home" onclick="switchView('home')" title="Favoris">
+        <div class="nav-item active" data-view="home" onclick="switchView('home')">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
         </div>
-        <div class="nav-item" data-view="tasks" onclick="switchView('tasks')" title="Tâches">
+        <div class="nav-item" data-view="tasks" onclick="switchView('tasks')">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
         </div>
-        <div class="mt-auto nav-item" data-view="settings" onclick="switchView('settings')" title="Paramètres">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        <div class="nav-item" data-view="settings" onclick="switchView('settings')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
         </div>
     </nav>
 
     <main class="main-container">
-        
         <!-- VUE : ACCUEIL -->
         <section id="view-home" class="view-content active">
-            <header class="mb-10 flex justify-between items-start">
-                <div>
-                    <h1 class="text-6xl font-semibold text-white tracking-tight mb-3">Bonjour.</h1>
-                    <p class="text-lg text-slate-400 font-light">Accédez à vos espaces de travail préférés.</p>
+            <header class="mb-8 flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <h1 id="greetingText" class="text-4xl md:text-6xl font-semibold text-white tracking-tight">Bonjour.</h1>
+                    <button onclick="openModal()" class="bg-[var(--accent-primary)] w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v12m6-6H6"/></svg>
+                    </button>
                 </div>
-                <div>
-                    <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 px-6 py-3.5 rounded-2xl text-[13px] text-white font-bold uppercase tracking-widest transition shadow-lg shadow-blue-900/20">Ajouter +</button>
-                </div>
+                <p class="text-slate-400 font-light text-sm md:text-lg">Vos liens favoris en un clin d'œil.</p>
             </header>
 
-            <div class="tool-bar">
-                <div class="search-container flex-1 relative">
-                    <svg class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" id="searchInput" oninput="renderHome()" placeholder="Rechercher un lien..." class="search-input">
+            <div class="flex flex-col md:flex-row gap-4 mb-8">
+                <div class="relative flex-1">
+                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="searchInput" oninput="renderHome()" placeholder="Rechercher..." class="search-input">
                 </div>
-                <select id="sortSelect" onchange="renderHome()" class="bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-sm text-slate-300 outline-none cursor-pointer hover:bg-white/10 transition">
-                    <option value="name_asc">Nom (A-Z)</option>
-                    <option value="name_desc">Nom (Z-A)</option>
+                <select id="sortSelect" onchange="renderHome()" class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-300 outline-none">
+                    <option value="name_asc">Nom A-Z</option>
                     <option value="date_new">Nouveautés</option>
-                    <option value="date_old">Anciens</option>
                 </select>
             </div>
 
-            <div id="homeGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-10 gap-y-12 pb-24"></div>
+            <div id="homeGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-x-4 gap-y-8 pb-10"></div>
         </section>
 
         <!-- VUE : TÂCHES -->
         <section id="view-tasks" class="view-content">
-            <header class="mb-14 flex justify-between items-end">
-                <div>
-                    <h1 class="text-6xl font-semibold text-white tracking-tighter mb-4">Objectifs</h1>
-                    <p id="dateLabel" class="text-slate-500 text-xl font-light"></p>
-                </div>
-                <div class="liquid-card px-8 py-5 flex flex-col items-center">
-                    <span id="activeCount" class="text-4xl font-semibold text-blue-400">0</span>
-                    <span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mt-2">Actions</span>
-                </div>
-            </header>
-            <div class="liquid-card p-4 flex gap-4 mb-10 overflow-hidden">
-                <input type="text" id="taskInput" placeholder="Écrire une nouvelle tâche..." class="flex-1 px-6 py-4 bg-transparent outline-none text-xl text-white">
-                <button onclick="addTask()" class="bg-blue-600 px-10 py-4 rounded-2xl font-bold text-white uppercase tracking-wider hover:bg-blue-500 transition">Ajouter</button>
+            <h1 class="text-4xl font-semibold text-white mb-2">Objectifs</h1>
+            <p id="dateLabel" class="text-slate-500 text-sm mb-8"></p>
+            
+            <div class="liquid-card p-2 flex gap-2 mb-8">
+                <input type="text" id="taskInput" placeholder="Nouvelle tâche..." class="flex-1 px-4 py-3 bg-transparent outline-none text-white">
+                <button onclick="addTask()" class="bg-[var(--accent-primary)] w-12 h-12 rounded-xl flex items-center justify-center text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v12m6-6H6"/></svg>
+                </button>
             </div>
-            <div id="taskList" class="space-y-4"></div>
+            
+            <div id="taskList" class="space-y-3"></div>
         </section>
 
         <!-- VUE : PARAMÈTRES -->
         <section id="view-settings" class="view-content">
-            <h1 class="text-5xl font-semibold text-white mb-10">Réglages</h1>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="liquid-card p-10">
-                    <h3 class="text-xl font-bold mb-8">Ambiance</h3>
-                    <div class="grid grid-cols-2 gap-6">
-                        <div onclick="setTheme('#020617', '#3b82f6', '#06b6d4')" class="theme-swatch bg-[#020617] relative overflow-hidden active"> 
-                            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20"></div>
-                            <span class="absolute bottom-3 left-3 text-[10px] font-bold uppercase text-white/50">Ocean Deep</span>
-                        </div>
-                        <div onclick="setTheme('#0f172a', '#8b5cf6', '#ec4899')" class="theme-swatch bg-[#0f172a] relative overflow-hidden"> 
-                            <div class="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-pink-500/20"></div>
-                            <span class="absolute bottom-3 left-3 text-[10px] font-bold uppercase text-white/50">Cyber Nebula</span>
-                        </div>
-                        <div onclick="setTheme('#064e3b', '#10b981', '#34d399')" class="theme-swatch bg-[#064e3b] relative overflow-hidden"> 
-                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20"></div>
-                            <span class="absolute bottom-3 left-3 text-[10px] font-bold uppercase text-white/50">Forest Zen</span>
-                        </div>
-                        <div onclick="setTheme('#451a03', '#f59e0b', '#ef4444')" class="theme-swatch bg-[#451a03] relative overflow-hidden"> 
-                            <div class="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-red-500/20"></div>
-                            <span class="absolute bottom-3 left-3 text-[10px] font-bold uppercase text-white/50">Desert Flare</span>
+            <h1 class="text-4xl font-semibold text-white mb-8">Réglages</h1>
+            
+            <div class="space-y-10">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Profil -->
+                    <div class="liquid-card p-6">
+                        <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-4">Votre Prénom</h3>
+                        <input type="text" id="userNameInput" oninput="updateUserName(this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none text-sm" placeholder="Ex: Jean">
+                    </div>
+                    <!-- Thème -->
+                    <div class="liquid-card p-6">
+                        <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-4">Personnalisation</h3>
+                        <div class="grid grid-cols-5 gap-2">
+                            <div onclick="setTheme('#020617', '#3b82f6', '#06b6d4', 'blue')" class="theme-swatch bg-blue-600"></div>
+                            <div onclick="setTheme('#0a0208', '#d946ef', '#701a75', 'pink')" class="theme-swatch bg-pink-600"></div>
+                            <div onclick="setTheme('#0c0a02', '#eab308', '#92400e', 'yellow')" class="theme-swatch bg-yellow-600"></div>
+                            <div onclick="setTheme('#0c0202', '#ef4444', '#7f1d1d', 'red')" class="theme-swatch bg-red-600"></div>
+                            <div onclick="setTheme('#020c08', '#10b981', '#064e3b', 'green')" class="theme-swatch bg-emerald-600"></div>
                         </div>
                     </div>
-                </div>
-                <div class="liquid-card p-10">
-                    <h3 class="text-xl font-bold mb-8">Maintenance</h3>
-                    <div class="space-y-4">
-                        <button onclick="localStorage.clear(); location.reload();" class="w-full py-5 text-red-400 bg-red-500/10 rounded-2xl font-bold hover:bg-red-500/20 transition border border-red-500/20">RÉINITIALISER L'APPLICATION</button>
+                    <!-- Data -->
+                    <div class="liquid-card p-6 flex flex-col justify-center gap-3">
+                        <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Sauvegarde</h3>
+                        <div class="flex gap-2">
+                            <button onclick="exportData()" class="flex-1 py-2 bg-white/5 rounded-lg text-[11px] font-bold border border-white/10">Export</button>
+                            <label class="flex-1 py-2 bg-white/5 rounded-lg text-[11px] font-bold border border-white/10 text-center cursor-pointer">
+                                Import
+                                <input type="file" class="hidden" accept=".json" onchange="importData(event)">
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-
     </main>
 
-    <!-- Modal Bookmark -->
-    <div id="bookmarkModal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[1000] hidden flex items-center justify-center p-6">
-        <div class="liquid-card w-full max-w-lg p-10 overflow-y-auto max-h-[90vh] shadow-2xl">
-            <div class="flex justify-between items-center mb-8">
-                <h2 id="modalTitle" class="text-3xl font-bold tracking-tight">Ajouter un lien</h2>
-                <button onclick="closeModal()" class="text-slate-500 hover:text-white transition">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
+    <!-- Modal -->
+    <div id="bookmarkModal" class="fixed inset-0 bg-black/95 z-[2000] hidden flex items-end md:items-center justify-center">
+        <div class="liquid-card w-full max-w-lg p-6 md:p-10 rounded-t-3xl md:rounded-3xl border-b-0 md:border-b">
+            <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6 md:hidden"></div>
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modalTitle" class="text-2xl font-bold">Ajouter un lien</h2>
+                <button onclick="closeModal()" class="p-2 text-slate-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             
-            <div class="space-y-8">
+            <div class="space-y-4">
                 <input type="hidden" id="editId">
-                <div class="space-y-4">
-                    <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-2">Informations</h3>
-                    <input type="text" id="bmName" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white outline-none focus:border-blue-500/50" placeholder="Nom (ex: Figma)">
-                    <input type="text" id="bmUrl" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white outline-none focus:border-blue-500/50" placeholder="URL (ex: figma.com)">
-                    <button onclick="confirmBookmark()" class="w-full py-4 bg-blue-600 rounded-2xl font-bold text-white hover:bg-blue-500 transition shadow-lg shadow-blue-900/40">Enregistrer</button>
+                <input type="text" id="bmName" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none" placeholder="Nom">
+                <input type="text" id="bmUrl" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none" placeholder="URL (ex: google.com)">
+                
+                <div class="flex gap-2 p-1 bg-white/5 rounded-xl w-full">
+                    <button onclick="setIconMode('auto')" id="tab-auto" class="flex-1 py-2 text-xs font-bold rounded-lg transition active">Auto</button>
+                    <button onclick="setIconMode('emoji')" id="tab-emoji" class="flex-1 py-2 text-xs font-bold rounded-lg transition">Emoji</button>
+                    <button onclick="setIconMode('url')" id="tab-url" class="flex-1 py-2 text-xs font-bold rounded-lg transition">URL</button>
+                </div>
+                
+                <div id="iconInputContainer" class="hidden">
+                    <input type="text" id="bmIconValue" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none" placeholder="Emoji ou URL Image">
                 </div>
 
-                <div id="importSection" class="relative py-4 flex flex-col gap-6">
-                    <div class="relative flex items-center">
-                        <div class="flex-grow border-t border-white/5"></div>
-                        <span class="flex-shrink mx-6 text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em]">Ou Importer</span>
-                        <div class="flex-grow border-t border-white/5"></div>
-                    </div>
-                    <label class="file-upload-label group">
-                        <div class="w-14 h-14 rounded-full bg-blue-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition duration-500">
-                            <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                        </div>
-                        <span class="text-sm font-semibold text-slate-300">Déposer un fichier .html</span>
-                        <input type="file" id="bookmarkFile" accept=".html" class="hidden" onchange="handleFileImport(event)">
-                    </label>
-                </div>
-                <div id="importStatus" class="hidden text-center text-xs p-4 rounded-xl font-medium"></div>
+                <button onclick="confirmBookmark()" class="w-full py-4 bg-[var(--accent-primary)] rounded-xl font-bold text-white shadow-lg mt-4">Enregistrer</button>
             </div>
         </div>
     </div>
 
     <script>
-        // STATE
         let bookmarks = JSON.parse(localStorage.getItem('fish_bookmarks')) || [];
         let tasks = JSON.parse(localStorage.getItem('fish_tasks')) || [];
+        let userName = localStorage.getItem('fish_user_name') || "";
+        let currentIconMode = 'auto';
 
-        // NAVIGATION
+        function showNotification(msg) {
+            const notif = document.getElementById('notification');
+            notif.querySelector('span').textContent = msg;
+            notif.classList.add('show');
+            setTimeout(() => notif.classList.remove('show'), 3000);
+        }
+
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            let greet = hour < 18 ? "Bonjour" : "Bonsoir";
+            document.getElementById('greetingText').textContent = userName ? `${greet}, ${userName}` : `${greet}.`;
+        }
+
+        function updateUserName(val) {
+            userName = val.trim();
+            localStorage.setItem('fish_user_name', userName);
+            updateGreeting();
+        }
+
         function switchView(viewId) {
             document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
             document.getElementById(`view-${viewId}`).classList.add('active');
@@ -357,206 +389,167 @@
                 n.classList.remove('active');
                 if(n.dataset.view === viewId) n.classList.add('active');
             });
+            document.querySelector('.main-container').scrollTop = 0;
         }
 
-        // THEME
-        function setTheme(bg, acc1, acc2) {
+        function setTheme(bg, acc1, acc2, name) {
             document.documentElement.style.setProperty('--bg-color', bg);
             document.documentElement.style.setProperty('--accent-primary', acc1);
             document.documentElement.style.setProperty('--accent-secondary', acc2);
-            localStorage.setItem('fish_theme', JSON.stringify({bg, acc1, acc2}));
-        }
-
-        // FAVORIS
-        function saveBookmarks() {
-            localStorage.setItem('fish_bookmarks', JSON.stringify(bookmarks));
+            localStorage.setItem('fish_theme', JSON.stringify({bg, acc1, acc2, name}));
             renderHome();
         }
 
-        function openModal(editId = null) {
-            const modal = document.getElementById('bookmarkModal');
-            const title = document.getElementById('modalTitle');
-            const importSection = document.getElementById('importSection');
-            const inputId = document.getElementById('editId');
-            const inputName = document.getElementById('bmName');
-            const inputUrl = document.getElementById('bmUrl');
-            
-            modal.classList.remove('hidden');
-            document.getElementById('importStatus').classList.add('hidden');
+        function setIconMode(mode) {
+            currentIconMode = mode;
+            document.querySelectorAll('#bookmarkModal button[id^="tab-"]').forEach(t => t.classList.remove('bg-white/10', 'active'));
+            document.getElementById(`tab-${mode}`).classList.add('bg-white/10', 'active');
+            document.getElementById('iconInputContainer').classList.toggle('hidden', mode === 'auto');
+        }
 
-            if(editId) {
-                const item = bookmarks.find(b => b.id === editId);
-                title.textContent = "Modifier le lien";
-                inputId.value = editId;
-                inputName.value = item.name;
-                inputUrl.value = item.url;
-                importSection.classList.add('hidden');
-            } else {
-                title.textContent = "Ajouter un lien";
-                inputId.value = "";
-                inputName.value = "";
-                inputUrl.value = "";
-                importSection.classList.remove('hidden');
-            }
+        function openModal() {
+            document.getElementById('bookmarkModal').classList.remove('hidden');
+            document.getElementById('editId').value = "";
+            document.getElementById('bmName').value = "";
+            document.getElementById('bmUrl').value = "";
+            document.getElementById('bmIconValue').value = "";
+            setIconMode('auto');
         }
 
         function closeModal() { document.getElementById('bookmarkModal').classList.add('hidden'); }
 
         function confirmBookmark() {
-            const editId = document.getElementById('editId').value;
             const name = document.getElementById('bmName').value;
             let url = document.getElementById('bmUrl').value;
+            const iconValue = document.getElementById('bmIconValue').value;
 
             if(name && url) {
                 if(!url.startsWith('http')) url = 'https://' + url;
-                
-                if(editId) {
-                    const index = bookmarks.findIndex(b => b.id == editId);
-                    if(index !== -1) bookmarks[index] = { ...bookmarks[index], name, url };
-                } else {
-                    bookmarks.push({ id: Date.now(), name, url, date: Date.now() });
-                }
-                
-                saveBookmarks();
+                bookmarks.push({ id: Date.now(), name, url, iconMode: currentIconMode, iconValue, date: Date.now() });
+                localStorage.setItem('fish_bookmarks', JSON.stringify(bookmarks));
+                renderHome();
                 closeModal();
             }
-        }
-
-        // Système d'icônes intelligentes
-        function getFavicon(url) {
-            try {
-                const domain = new URL(url).hostname;
-                return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-            } catch (e) {
-                return null;
-            }
-        }
-
-        function handleFileImport(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            const statusDiv = document.getElementById('importStatus');
-            statusDiv.textContent = "Analyse des données...";
-            statusDiv.className = "text-center text-xs p-4 rounded-xl font-medium bg-blue-500/10 text-blue-400 block";
-
-            reader.onload = function(e) {
-                try {
-                    const content = e.target.result;
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(content, "text/html");
-                    const links = doc.querySelectorAll('a');
-                    
-                    let count = 0;
-                    const now = Date.now();
-                    links.forEach((link, index) => {
-                        const name = link.textContent.trim();
-                        const url = link.getAttribute('href');
-                        if (name && url && url.startsWith('http') && !bookmarks.some(b => b.url === url)) {
-                            bookmarks.push({ id: now + index, name: name.substring(0, 40), url, date: now });
-                            count++;
-                        }
-                    });
-
-                    saveBookmarks();
-                    statusDiv.textContent = `${count} liens importés.`;
-                    statusDiv.className = "text-center text-xs p-4 rounded-xl font-medium bg-green-500/10 text-green-400 block";
-                    setTimeout(closeModal, 1000);
-                } catch (err) {
-                    statusDiv.textContent = "Fichier invalide.";
-                    statusDiv.className = "text-center text-xs p-4 rounded-xl font-medium bg-red-500/10 text-red-400 block";
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function deleteBookmark(id, e) {
-            e.stopPropagation();
-            bookmarks = bookmarks.filter(x => x.id !== id);
-            saveBookmarks();
         }
 
         function renderHome() {
             const grid = document.getElementById('homeGrid');
             const query = document.getElementById('searchInput').value.toLowerCase();
-            const sortBy = document.getElementById('sortSelect').value;
             grid.innerHTML = '';
             
-            let filtered = bookmarks.filter(b => b.name.toLowerCase().includes(query));
-
-            filtered.sort((a, b) => {
-                if(sortBy === 'name_asc') return a.name.localeCompare(b.name);
-                if(sortBy === 'name_desc') return b.name.localeCompare(a.name);
-                if(sortBy === 'date_new') return b.date - a.date;
-                if(sortBy === 'date_old') return a.date - b.date;
-            });
-
-            filtered.forEach(item => {
+            bookmarks.filter(b => b.name.toLowerCase().includes(query)).forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'app-icon-wrapper';
                 div.onclick = () => window.open(item.url, '_blank');
                 
-                const iconUrl = getFavicon(item.url);
-                const initial = item.name[0] ? item.name[0].toUpperCase() : '?';
+                const initial = item.name[0]?.toUpperCase() || '?';
+                let iconHtml = '';
+
+                if (item.iconMode === 'emoji' && item.iconValue) {
+                    iconHtml = `<span class="emoji-display">${item.iconValue}</span>`;
+                } else if (item.iconMode === 'url' && item.iconValue) {
+                    iconHtml = `<img src="${item.iconValue}" onerror="this.src='https://www.google.com/s2/favicons?domain=${new URL(item.url).hostname}&sz=128'">`;
+                } else {
+                    iconHtml = `<img src="https://www.google.com/s2/favicons?domain=${new URL(item.url).hostname}&sz=128" onerror="this.parentElement.innerHTML='<span class=\'text-2xl font-bold\'>${initial}</span>'">`;
+                }
 
                 div.innerHTML = `
                     <div class="icon-actions">
-                        <button onclick="event.stopPropagation(); openModal(${item.id})" class="action-btn btn-edit">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                        </button>
-                        <button onclick="deleteBookmark(${item.id}, event)" class="action-btn btn-del">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <button onclick="event.stopPropagation(); deleteBookmark(${item.id})" class="action-btn btn-del">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
-                    <div class="app-icon ${!iconUrl ? 'fallback-icon' : ''}">
-                        ${iconUrl ? `<img src="${iconUrl}" alt="" onerror="this.parentElement.classList.add('fallback-icon'); this.remove(); this.parentElement.innerHTML='<span class=\'text-2xl font-semibold text-white/90\'>${initial}</span>'">` : `<span class="text-2xl font-semibold text-white/90">${initial}</span>`}
-                    </div>
+                    <div class="app-icon">${iconHtml}</div>
                     <div class="app-label">${item.name}</div>
                 `;
                 grid.appendChild(div);
             });
         }
 
-        // TÂCHES
-        function saveTasks() { localStorage.setItem('fish_tasks', JSON.stringify(tasks)); renderTasks(); }
-        function addTask() {
-            const val = document.getElementById('taskInput').value;
-            if(val) { tasks.push({id: Date.now(), text: val, done: false}); document.getElementById('taskInput').value = ''; saveTasks(); }
+        function deleteBookmark(id) {
+            bookmarks = bookmarks.filter(b => b.id !== id);
+            localStorage.setItem('fish_bookmarks', JSON.stringify(bookmarks));
+            renderHome();
         }
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            if(input.value) {
+                tasks.push({id: Date.now(), text: input.value, done: false});
+                input.value = '';
+                localStorage.setItem('fish_tasks', JSON.stringify(tasks));
+                renderTasks();
+            }
+        }
+
         function renderTasks() {
             const list = document.getElementById('taskList');
             list.innerHTML = '';
             tasks.forEach(t => {
                 const div = document.createElement('div');
-                div.className = 'liquid-card p-6 flex items-center justify-between group transition hover:bg-white/[0.04]';
+                div.className = `liquid-card p-4 flex items-center justify-between ${t.done ? 'opacity-50' : ''}`;
                 div.innerHTML = `
-                    <div class="flex items-center gap-5">
-                        <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.id})" class="w-6 h-6 rounded-lg accent-blue-500 cursor-pointer">
-                        <span class="text-lg ${t.done?'line-through text-slate-600':'text-white'}">${t.text}</span>
+                    <div class="flex items-center gap-3" onclick="toggleTask(${t.id})">
+                        <div class="w-6 h-6 rounded-full border-2 border-[var(--accent-primary)] flex items-center justify-center">
+                            ${t.done ? '<div class="w-3 h-3 bg-[var(--accent-primary)] rounded-full"></div>' : ''}
+                        </div>
+                        <span class="text-sm ${t.done ? 'line-through' : 'text-white'}">${t.text}</span>
                     </div>
-                    <button onclick="deleteTask(${t.id})" class="opacity-0 group-hover:opacity-100 p-2 text-slate-500 hover:text-red-400 transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                    </button>
+                    <button onclick="deleteTask(${t.id})" class="text-slate-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg></button>
                 `;
                 list.appendChild(div);
             });
-            document.getElementById('activeCount').textContent = tasks.filter(t=>!t.done).length;
         }
-        function toggleTask(id) { const t = tasks.find(x=>x.id===id); if(t) t.done = !t.done; saveTasks(); }
-        function deleteTask(id) { tasks = tasks.filter(x=>x.id!==id); saveTasks(); }
 
-        window.onload = () => {
-            const t = JSON.parse(localStorage.getItem('fish_theme'));
-            if(t) setTheme(t.bg, t.acc1, t.acc2);
-
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-            document.getElementById('dateLabel').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-
-            renderHome();
+        function toggleTask(id) {
+            const t = tasks.find(x => x.id === id);
+            if(t) t.done = !t.done;
+            localStorage.setItem('fish_tasks', JSON.stringify(tasks));
             renderTasks();
         }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            localStorage.setItem('fish_tasks', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        function exportData() {
+            const data = { bookmarks, tasks, userName };
+            const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "fish-focus-data.json";
+            a.click();
+            showNotification("Données exportées !");
+        }
+
+        function importData(e) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const data = JSON.parse(event.target.result);
+                if(data.bookmarks) bookmarks = data.bookmarks;
+                if(data.tasks) tasks = data.tasks;
+                if(data.userName) userName = data.userName;
+                localStorage.setItem('fish_bookmarks', JSON.stringify(bookmarks));
+                localStorage.setItem('fish_tasks', JSON.stringify(tasks));
+                localStorage.setItem('fish_user_name', userName);
+                location.reload();
+            };
+            reader.readAsText(e.target.files[0]);
+        }
+
+        window.onload = () => {
+            const t = JSON.parse(localStorage.getItem('fish_theme')) || {bg: '#020617', acc1: '#3b82f6', acc2: '#06b6d4', name: 'blue'};
+            setTheme(t.bg, t.acc1, t.acc2, t.name);
+            document.getElementById('userNameInput').value = userName;
+            const now = new Date();
+            document.getElementById('dateLabel').textContent = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+            updateGreeting();
+            renderHome();
+            renderTasks();
+        };
     </script>
 </body>
 </html>
